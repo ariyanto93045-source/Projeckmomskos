@@ -201,21 +201,33 @@ class Tugas6 extends StatelessWidget {
 
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Text("Belum punya akun? ", style: TextStyle(fontSize: 18)),
+              children: [
+                const Text(
+                  "Belum punya akun? ",
+                  style: TextStyle(fontSize: 18),
+                ),
 
-                Icon(
+                const Icon(
                   Icons.app_registration,
                   color: Colors.deepPurple,
                   size: 20,
                 ),
 
-                Text(
-                  "Daftar Sekarang",
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.deepPurple,
-                    fontWeight: FontWeight.bold,
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Tugas6()),
+                    );
+                  },
+
+                  child: const Text(
+                    " Daftar Sekarang",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.deepPurple,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],

@@ -267,7 +267,7 @@ class DashboardPage extends StatelessWidget {
 
                       child: const Column(
                         children: [
-                          Icon(Icons.person_add, color: Colors.white, size: 35),
+                          Icon(Icons.person_add, color: Colors.white, size: 20),
 
                           SizedBox(height: 10),
 
@@ -275,7 +275,7 @@ class DashboardPage extends StatelessWidget {
                             "Tambah\nPenghuni",
                             textAlign: TextAlign.center,
 
-                            style: TextStyle(color: Colors.white, fontSize: 18),
+                            style: TextStyle(color: Colors.white, fontSize: 15),
                           ),
                         ],
                       ),
@@ -332,7 +332,7 @@ class DashboardPage extends StatelessWidget {
                             "Pembayaran",
                             textAlign: TextAlign.center,
 
-                            style: TextStyle(color: Colors.white, fontSize: 18),
+                            style: TextStyle(color: Colors.white, fontSize: 15),
                           ),
                         ],
                       ),
