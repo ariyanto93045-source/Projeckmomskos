@@ -1,8 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:proyekaplikasikoskosan/dasboardkoskosan.dart';
+import 'package:proyekaplikasikoskosan/filedaftarsekarang.dart';
 
-class Tugas6 extends StatelessWidget {
+import 'database_helpermomkos.dart';
+
+class Tugas6 extends StatefulWidget {
   const Tugas6({super.key});
 
+  @override
+  State<Tugas6> createState() => _Tugas6State();
+}
+
+class _Tugas6State extends State<Tugas6> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,13 +63,13 @@ class Tugas6 extends StatelessWidget {
 
           // INPUT EMAIL
           TextField(
+            controller: emailController,
             decoration: InputDecoration(
               labelText: "Masukkan Email",
-              border: OutlineInputBorder(), // buat kotak border
+              border: OutlineInputBorder(),
               prefixIcon: Icon(Icons.email),
             ),
           ),
-
           SizedBox(height: 25), // untuk batas border atas dan bawah
           // INPUT NOMOR HP
           TextField(
@@ -68,13 +79,16 @@ class Tugas6 extends StatelessWidget {
               prefixIcon: Icon(Icons.phone),
             ),
           ),
+
+          // TEKS PASSWORD
           SizedBox(height: 30),
-          const Text(
-            "Password",
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic,
+          TextField(
+            controller: passwordController,
+            obscureText: true,
+            decoration: InputDecoration(
+              labelText: "Password",
+              border: OutlineInputBorder(),
+              prefixIcon: Icon(Icons.lock),
             ),
           ),
 
@@ -91,21 +105,37 @@ class Tugas6 extends StatelessWidget {
 
           SizedBox(height: 30),
 
-          //  tombol masuk
+          //  TOMBOL MASUK
           SizedBox(
             width: double.infinity,
             height: 50,
             child: ElevatedButton(
-              // icon: const Icon(Icons.arrow_forward, color: Colors.white),
-              // label: const Text("Masuk", style: TextStyle(color: Colors.white)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 8, 80, 139),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25),
                 ),
               ),
-              onPressed: () {
-                print("Tombol Masuk Ditekan");
+
+              // onPressed: () {
+              //   Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (context) => const DashboardPage(),
+              //     ),
+              //   );
+              // },
+              onPressed: () async {
+                final user = await DBHelper().login(
+                  emailController.text,
+                  passwordController.text,
+                );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const DashboardPage(),
+                  ),
+                );
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -217,7 +247,9 @@ class Tugas6 extends StatelessWidget {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const Tugas6()),
+                      MaterialPageRoute(
+                        builder: (context) => const DaftarPage(),
+                      ),
                     );
                   },
 
