@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:proyekaplikasikoskosan/dasboardkoskosan.dart';
-import 'package:proyekaplikasikoskosan/filedaftarsekarang.dart';
-
-import 'database_helpermomkos.dart';
+import 'package:proyekaplikasikoskosan/database_helpermomkos.dart';
+import 'package:proyekaplikasikoskosan/model%20usermomkos.dart';
 
 class Tugas6 extends StatefulWidget {
   const Tugas6({super.key});
@@ -12,8 +10,147 @@ class Tugas6 extends StatefulWidget {
 }
 
 class _Tugas6State extends State<Tugas6> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+   
+   Future<void> login() async{
+   final result = await DBHelper().login (email.text, password.text,);}
+  
+if (result.isNotEmpty) {
+  ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Login Berhasil"),
+      ),
+    );
+
+Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const DashboardPage(),
+      ),
+    );
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Email atau Password Salah"),
+      ),
+    );
+  }
+}
+
+
+
+
+
+  
+  final formKey = GlobalKey<FormState>();
+
+  TextEditingController nama = TextEditingController();
+
+  TextEditingController email = TextEditingController();
+
+  TextEditingController hp = TextEditingController();
+
+  TextEditingController password = TextEditingController();
+  int? selectedId;
+
+  // REGISTER
+
+  void register() async {
+    final userEmail = email.text.trim();
+    final userPassword = password.text;
+    final userNama = nama.text;
+    final userhp = hp.text;
+
+    if (userEmail.isEmpty || userPassword.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('isi semua filed bro!')));
+      return;
+    }
+
+    final user = User(
+      nama: userNama,
+      hp: userhp,
+      email: userEmail,
+      password: userPassword,
+    );
+
+    bool success = await DBHelper().registerUser(user);
+
+    // Cek apakah widget masih terpasang (mounted) sebelum menggunakan context
+
+    if (!mounted) return;
+
+    if (success) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Akun berhasil dibuat')));
+      setState(() {});
+      // Tambahkan navigasi ke halaman login jika perlu
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Email sudah terdaftar!')));
+    }
+  }
+
+  //  GET DATA
+  Future<List<Map<String, dynamic>>> getData() {
+    return DBHelper().getUsers();
+  }
+
+  // SIMPAN DATA
+
+  Future simpanData() async {
+    if (formKey.currentState!.validate()) {
+      User user = User(
+        nama: nama.text,
+        email: email.text,
+        hp: hp.text,
+        password: password.text,
+      );
+      await DBHelper().registerUser(user);
+
+      nama.clear();
+      email.clear();
+      hp.clear();
+      password.clear();
+
+      setState(() {});
+    }
+  }
+
+  Future updateData() async {
+    if (selectedId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Pilih data yang akan diedit")),
+      );
+      return;
+    }
+
+    User user = User(
+      id: selectedId,
+      nama: nama.text,
+      email: email.text,
+      hp: hp.text,
+      password: password.text,
+    );
+
+    DBHelper().updateUser;
+
+    nama.clear();
+    email.clear();
+    hp.clear();
+    password.clear();
+
+    selectedId = null;
+
+    setState(() {});
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("Data berhasil diupdate")));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,6 +170,7 @@ class _Tugas6State extends State<Tugas6> {
         padding: const EdgeInsets.all(15),
 
         children: [
+          
           // JUDUL FORM
           const Text(
             "KOSKU APP",
@@ -43,6 +181,7 @@ class _Tugas6State extends State<Tugas6> {
               fontWeight: FontWeight.bold,
             ),
           ),
+          
           // JUDUL LIST
           const Text(
             "Kelola Hunian Menjadi Lebih Simple dan Mudah ",
@@ -61,15 +200,18 @@ class _Tugas6State extends State<Tugas6> {
             ),
           ),
 
+          
           // INPUT EMAIL
           TextField(
-            controller: emailController,
+            controller: email,
             decoration: InputDecoration(
               labelText: "Masukkan Email",
-              border: OutlineInputBorder(),
+              border: OutlineInputBorder(), // buat kotak border
               prefixIcon: Icon(Icons.email),
             ),
           ),
+
+          
           SizedBox(height: 25), // untuk batas border atas dan bawah
           // INPUT NOMOR HP
           TextField(
@@ -80,18 +222,26 @@ class _Tugas6State extends State<Tugas6> {
             ),
           ),
 
-          // TEKS PASSWORD
           SizedBox(height: 30),
+
+          // INPUT PASSWORD
           TextField(
-            controller: passwordController,
+            controller: password,
             obscureText: true,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: "Password",
               border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.lock),
             ),
           ),
 
+          // const Text(
+          //   "Password",
+          //   style: TextStyle(
+          //     fontSize: 12,
+          //     fontWeight: FontWeight.bold,
+          //     fontStyle: FontStyle.italic,
+          //   ),
+          // ),
           const Text(
             "Lupa Password?",
             style: TextStyle(
@@ -105,37 +255,21 @@ class _Tugas6State extends State<Tugas6> {
 
           SizedBox(height: 30),
 
-          //  TOMBOL MASUK
+          //  tombol masuk
           SizedBox(
             width: double.infinity,
             height: 50,
             child: ElevatedButton(
+              // icon: const Icon(Icons.arrow_forward, color: Colors.white),
+              // label: const Text("Masuk", style: TextStyle(color: Colors.white)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 8, 80, 139),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25),
                 ),
               ),
-
-              // onPressed: () {
-              //   Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (context) => const DashboardPage(),
-              //     ),
-              //   );
-              // },
-              onPressed: () async {
-                final user = await DBHelper().login(
-                  emailController.text,
-                  passwordController.text,
-                );
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const DashboardPage(),
-                  ),
-                );
+              onPressed: () {
+                print("Tombol Masuk Ditekan");
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -231,35 +365,21 @@ class _Tugas6State extends State<Tugas6> {
 
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  "Belum punya akun? ",
-                  style: TextStyle(fontSize: 18),
-                ),
+              children: const [
+                Text("Belum punya akun? ", style: TextStyle(fontSize: 18)),
 
-                const Icon(
+                Icon(
                   Icons.app_registration,
                   color: Colors.deepPurple,
                   size: 20,
                 ),
 
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const DaftarPage(),
-                      ),
-                    );
-                  },
-
-                  child: const Text(
-                    " Daftar Sekarang",
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.deepPurple,
-                      fontWeight: FontWeight.bold,
-                    ),
+                Text(
+                  "Daftar Sekarang",
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.deepPurple,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
