@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:path/path.dart';
-import 'package:proyekaplikasikoskosan/model%20usermomkos.dart';
+import 'package:proyekaplikasikoskosan/modelusermomkos.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DBHelper {
@@ -79,7 +79,7 @@ CREATE TABLE users(
     final db = await database;
     return await db.query(
       'users',
-      where: 'email = ? AND password = ?',
+      where: '(email = ? OR hp = ?) AND password = ?',
       whereArgs: [email, password],
     );
   }

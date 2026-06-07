@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proyekaplikasikoskosan/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: const DashboardPage());
+    return MaterialApp(home: const SplashScreen());
   }
 }
 
@@ -22,7 +23,8 @@ class MyApp extends StatelessWidget {
 // ======================
 
 class DashboardPage extends StatelessWidget {
-  const DashboardPage({super.key});
+  final String nama;
+  const DashboardPage({super.key, required this.nama});
 
   @override
   Widget build(BuildContext context) {
@@ -121,9 +123,9 @@ class DashboardPage extends StatelessWidget {
               // ======================
               // TEXT WELCOME
               // ======================
-              const Text(
-                "Selamat Datang, Admin!",
-                style: TextStyle(
+              Text(
+                "Selamat Datang, $nama",
+                style: const TextStyle(
                   fontSize: 34,
                   fontWeight: FontWeight.bold,
                   color: Colors.deepPurple,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:proyekaplikasikoskosan/dasboardkoskosan.dart';
 import 'package:proyekaplikasikoskosan/database_helpermomkos.dart';
-import 'package:proyekaplikasikoskosan/model%20usermomkos.dart';
+import 'package:proyekaplikasikoskosan/filedaftarsekarang.dart';
+import 'package:proyekaplikasikoskosan/modelusermomkos.dart';
 
 class Tugas6 extends StatefulWidget {
   const Tugas6({super.key});
@@ -10,37 +12,29 @@ class Tugas6 extends StatefulWidget {
 }
 
 class _Tugas6State extends State<Tugas6> {
-   
-   Future<void> login() async{
-   final result = await DBHelper().login (email.text, password.text,);}
-  
-if (result.isNotEmpty) {
-  ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Login Berhasil"),
-      ),
-    );
+  Future<void> login() async {
+    final result = await DBHelper().login(email.text, password.text);
 
-Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const DashboardPage(),
-      ),
-    );
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Email atau Password Salah"),
-      ),
-    );
+    //  login berhasil
+
+    if (result.isNotEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Login Berhasil")));
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DashboardPage(nama: result.first[nama]),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Email atau Password Salah")),
+      );
+    }
   }
-}
 
-
-
-
-
-  
   final formKey = GlobalKey<FormState>();
 
   TextEditingController nama = TextEditingController();
@@ -135,7 +129,7 @@ Navigator.push(
       password: password.text,
     );
 
-    DBHelper().updateUser;
+    await DBHelper().updateUser(user.toMap());
 
     nama.clear();
     email.clear();
@@ -170,7 +164,6 @@ Navigator.push(
         padding: const EdgeInsets.all(15),
 
         children: [
-          
           // JUDUL FORM
           const Text(
             "KOSKU APP",
@@ -181,7 +174,7 @@ Navigator.push(
               fontWeight: FontWeight.bold,
             ),
           ),
-          
+
           // JUDUL LIST
           const Text(
             "Kelola Hunian Menjadi Lebih Simple dan Mudah ",
@@ -200,7 +193,6 @@ Navigator.push(
             ),
           ),
 
-          
           // INPUT EMAIL
           TextField(
             controller: email,
@@ -211,7 +203,6 @@ Navigator.push(
             ),
           ),
 
-          
           SizedBox(height: 25), // untuk batas border atas dan bawah
           // INPUT NOMOR HP
           TextField(
@@ -268,8 +259,10 @@ Navigator.push(
                   borderRadius: BorderRadius.circular(25),
                 ),
               ),
-              onPressed: () {
-                print("Tombol Masuk Ditekan");
+
+              //  tombol login
+              onPressed: () async {
+                await login();
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -363,25 +356,57 @@ Navigator.push(
               ),
             ),
 
+            // belum punya akun
+            // child: Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   children: [
+            //     Text("Belum punya akun? ", style: TextStyle(fontSize: 18)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Text("Belum punya akun? ", style: TextStyle(fontSize: 18)),
-
-                Icon(
+              children: [
+                const Text(
+                  "Belum punya akun? ",
+                  style: TextStyle(fontSize: 18),
+                ),
+                const Icon(
                   Icons.app_registration,
                   color: Colors.deepPurple,
                   size: 20,
                 ),
 
-                Text(
-                  "Daftar Sekarang",
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.deepPurple,
-                    fontWeight: FontWeight.bold,
+                // Icon(
+                //   Icons.app_registration,
+                //   color: Colors.deepPurple,
+                //   size: 20,
+                // ),
+                SizedBox(width: 5),
+
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const DaftarPage()),
+                    );
+                  },
+
+                  child: const Text(
+                    "Daftar Sekarang",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.deepPurple,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
+
+                // //  dafatar sekarang
+                // Text("Daftar Sekarang",
+                //   style: TextStyle(
+                //     fontSize: 18,
+                //     color: Colors.deepPurple,
+                //     fontWeight: FontWeight.bold,
+                //   ),
+                // ),
               ],
             ),
           ),

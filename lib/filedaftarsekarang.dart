@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyekaplikasikoskosan/database_helpermomkos.dart';
-import 'package:proyekaplikasikoskosan/model%20usermomkos.dart';
+import 'package:proyekaplikasikoskosan/modelusermomkos.dart';
 
 class DaftarPage extends StatefulWidget {
   const DaftarPage({super.key});
