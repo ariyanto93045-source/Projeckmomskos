@@ -24,67 +24,40 @@ class _DashboardPageState extends State<DashboardPage> {
     showDialog(
       context: context,
       builder: (context) {
-        bool isLoading = false;
-
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: const Text("Edit Data"),
-              content: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    TextField(controller: nama),
-                    TextField(controller: email),
-                    TextField(controller: hp),
-                    TextField(controller: password),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: isLoading ? null : () => Navigator.pop(context),
-                  child: const Text("Batal"),
-                ),
-                ElevatedButton(
-                  onPressed: isLoading
-                      ? null
-                      : () async {
-                          setState(() {
-                            isLoading = true;
-                          });
-
-                          await DBHelper().updateUser({
-                            "id": user['id'],
-                            "nama": nama.text,
-                            "email": email.text,
-                            "hp": hp.text,
-                            "password": password.text,
-                          });
-
-                          setState(() {
-                            isLoading = false;
-                          });
-
-                          Navigator.pop(context);
-
-                          if (mounted) {
-                            this.setState(() {});
-                          }
-                        },
-                  child: isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                      : const Text("Simpan"),
-                ),
+        return AlertDialog(
+          title: const Text("Edit Data Penghuni"),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                TextField(controller: nama),
+                TextField(controller: email),
+                TextField(controller: hp),
+                TextField(controller: password),
               ],
-            );
-          },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Batal"),
+            ),
+
+            ElevatedButton(
+              onPressed: () async {
+                await DBHelper().updateUser({
+                  "id": user['id'],
+                  "nama": nama.text,
+                  "email": email.text,
+                  "hp": hp.text,
+                  "password": password.text,
+                });
+                Navigator.pop(context);
+                setState(() {});
+              },
+
+              child: const Text("Simpan"),
+            ),
+          ],
         );
       },
     );
@@ -94,10 +67,55 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Dashboard")),
-      body: Center(child: Text("Selamat datang ${widget.nama}")),
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: getUsers(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final users = snapshot.data!;
+          return ListView.builder(
+            itemCount: users.length,
+            itemBuilder: (context, index) {
+              final user = users[index];
+
+              return Card(
+                margin: const EdgeInsets.all(8),
+                child: ListTile(
+                  leading: CircleAvatar(
+                    child: Text(user['nama'][0].toUpperCase()),
+                  ),
+                  title: Text(user['nama']),
+                  subtitle: Text(user['email']),
+
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit, color: Colors.blue),
+                        onPressed: () {
+                          showEditDialog(user);
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () async {
+                          await DBHelper().deleteUser(user['id']);
+                          setState(() {});
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
+
 // // ======================
 // // DASHBOARD PAGE
 // // ======================
