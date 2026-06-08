@@ -16,77 +16,87 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   void showEditDialog(Map<String, dynamic> user) {
-  final nama = TextEditingController(text: user['nama']);
-  final email = TextEditingController(text: user['email']);
-  final hp = TextEditingController(text: user['hp']);
-  final password = TextEditingController(text: user['password']);
+    final nama = TextEditingController(text: user['nama']);
+    final email = TextEditingController(text: user['email']);
+    final hp = TextEditingController(text: user['hp']);
+    final password = TextEditingController(text: user['password']);
 
-  showDialog(
-    context: context,
-    builder: (context) {
-      bool isLoading = false;
+    showDialog(
+      context: context,
+      builder: (context) {
+        bool isLoading = false;
 
-      return StatefulBuilder(
-        builder: (context, setState) {
-          return AlertDialog(
-            title: const Text("Edit Data"),
-            content: SingleChildScrollView(
-              child: Column(
-                children: [
-                  TextField(controller: nama),
-                  TextField(controller: email),
-                  TextField(controller: hp),
-                  TextField(controller: password),
-                ],
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text("Edit Data"),
+              content: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    TextField(controller: nama),
+                    TextField(controller: email),
+                    TextField(controller: hp),
+                    TextField(controller: password),
+                  ],
+                ),
               ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: isLoading ? null : () => Navigator.pop(context),
-                child: const Text("Batal"),
-              ),
+              actions: [
+                TextButton(
+                  onPressed: isLoading ? null : () => Navigator.pop(context),
+                  child: const Text("Batal"),
+                ),
+                ElevatedButton(
+                  onPressed: isLoading
+                      ? null
+                      : () async {
+                          setState(() {
+                            isLoading = true;
+                          });
 
-              ElevatedButton(
-                onPressed: isLoading
-                    ? null
-                    : () async {
-                        setState(() {
-                          isLoading = true;
-                        });
+                          await DBHelper().updateUser({
+                            "id": user['id'],
+                            "nama": nama.text,
+                            "email": email.text,
+                            "hp": hp.text,
+                            "password": password.text,
+                          });
 
-                        await DBHelper().updateUser({
-                          "id": user['id'],
-                          "nama": nama.text,
-                          "email": email.text,
-                          "hp": hp.text,
-                          "password": password.text,
-                        });
+                          setState(() {
+                            isLoading = false;
+                          });
 
-                        setState(() {
-                          isLoading = false;
-                        });
+                          Navigator.pop(context);
 
-                        Navigator.pop(context);
+                          if (mounted) {
+                            this.setState(() {});
+                          }
+                        },
+                  child: isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text("Simpan"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 
-                        this.setState(() {});
-                      },
-                child: isLoading
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : const Text("Simpan"),
-              ),
-            ],
-          );
-        },
-      );
-    },
-  );
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Dashboard")),
+      body: Center(child: Text("Selamat datang ${widget.nama}")),
+    );
+  }
 }
 // // ======================
 // // DASHBOARD PAGE
