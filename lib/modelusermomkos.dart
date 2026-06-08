@@ -14,12 +14,6 @@ class User {
   });
 
   Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'nama': nama,
-      'email': email,
-      'hp': hp,
-      'password': password,
-    };
+    return {'nama': nama, 'email': email, 'hp': hp, 'password': password};
   }
 }

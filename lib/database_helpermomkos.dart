@@ -62,14 +62,14 @@ CREATE TABLE users(
   Future<bool> registerUser(User pengguna) async {
     final db = await database;
     try {
-      await db.insert('users', pengguna.toMap());
+      final result = await db.insert('users', pengguna.toMap());
+      log("INSERT SUCCESS ID: $result");
       return true;
     } catch (e) {
-      log(e.toString());
+      log("INSERT ERROR: $e");
       return false;
     }
   }
-
   // fungsi login
 
   Future<List<Map<String, dynamic>>> login(
@@ -80,7 +80,7 @@ CREATE TABLE users(
     return await db.query(
       'users',
       where: '(email = ? OR hp = ?) AND password = ?',
-      whereArgs: [email, password],
+      whereArgs: [email, email, password],
     );
   }
 
