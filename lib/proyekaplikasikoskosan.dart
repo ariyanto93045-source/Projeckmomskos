@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:proyekaplikasikoskosan/dasboardkoskosan.dart';
 import 'package:proyekaplikasikoskosan/database_helpermomkos.dart';
 import 'package:proyekaplikasikoskosan/filedaftarsekarang.dart';
+import 'package:proyekaplikasikoskosan/halamanutama.dart';
 import 'package:proyekaplikasikoskosan/modelusermomkos.dart';
 
 class Tugas6 extends StatefulWidget {
@@ -19,14 +19,23 @@ class _Tugas6State extends State<Tugas6> {
   bool isLoading = false;
 
   Future<void> login() async {
+    print("EMAIL = ${email.text}");
+    print("PASSWORD = ${password.text}");
+
     setState(() => isLoading = true);
 
     final result = await DBHelper().login(email.text, password.text);
 
     setState(() => isLoading = false);
 
+    print(result);
+
     if (result.isNotEmpty) {
       if (!mounted) return;
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => const HalamanUtama()),
+      // );
 
       Navigator.push(
         context,
@@ -116,7 +125,7 @@ class _Tugas6State extends State<Tugas6> {
                       TextField(
                         controller: email,
                         decoration: InputDecoration(
-                          labelText: "Email",
+                          labelText: "Masukkan Email",
                           prefixIcon: const Icon(Icons.email),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
@@ -143,7 +152,7 @@ class _Tugas6State extends State<Tugas6> {
                         controller: password,
                         obscureText: true,
                         decoration: InputDecoration(
-                          labelText: "Password",
+                          labelText: "Masukkan Password",
                           prefixIcon: const Icon(Icons.lock),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),

@@ -73,20 +73,26 @@ class _DashboardPageState extends State<DashboardPage> {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
+
           final users = snapshot.data!;
           return ListView.builder(
             itemCount: users.length,
             itemBuilder: (context, index) {
               final user = users[index];
 
+              String namaUser = user['nama']?.toString() ?? "";
+
               return Card(
                 margin: const EdgeInsets.all(8),
                 child: ListTile(
                   leading: CircleAvatar(
-                    child: Text(user['nama'][0].toUpperCase()),
+                    child: Text(
+                      namaUser.isNotEmpty ? namaUser[0].toUpperCase() : "?",
+                    ),
                   ),
-                  title: Text(user['nama']),
-                  subtitle: Text(user['email']),
+
+                  title: Text(user['nama'] ?? ""),
+                  subtitle: Text(user['email'] ?? ""),
 
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
