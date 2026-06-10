@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:proyekaplikasikoskosan/database_helpermomkos.dart';
+import 'package:proyekaplikasikoskosan/modelusermomkos.dart';
 
 class HalamanUtama extends StatefulWidget {
   const HalamanUtama({super.key});
@@ -30,6 +32,9 @@ class DashboardPage extends StatelessWidget {
   void tambahPenghuni(BuildContext context) {
     final nama = TextEditingController();
     final kamar = TextEditingController();
+    final email = TextEditingController();
+    final hp = TextEditingController();
+    final password = TextEditingController();
 
     showDialog(
       context: context,
@@ -41,22 +46,33 @@ class DashboardPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
-                controller: nama,
-                decoration: const InputDecoration(labelText: "Nama Penghuni"),
+                controller: email,
+                decoration: const InputDecoration(labelText: "Email"),
               ),
 
               TextField(
+                controller: hp,
+                decoration: const InputDecoration(labelText: "No hp"),
+              ),
+              TextField(
                 controller: kamar,
-                decoration: const InputDecoration(labelText: "Nomor Kamar"),
+                decoration: const InputDecoration(labelText: "No kamar"),
               ),
             ],
           ),
 
           actions: [
             ElevatedButton(
-              onPressed: () {
-                print("Nama : ${nama.text}");
-                print("Kamar : ${kamar.text}");
+              onPressed: () async {
+                await DBHelper().registerUser(
+                  User(
+                    nama: nama.text,
+                    email: email.text,
+                    hp: hp.text,
+                    password: password.text,
+                    kamar: kamar.text,
+                  ),
+                );
 
                 Navigator.pop(context);
               },
@@ -480,31 +496,61 @@ class DashboardPage extends StatelessWidget {
 
               // ======================
               // LIST PENGHUNI
-              // ======================
-              penghuniCard(
-                huruf: "B",
-                nama: "Budi Santoso",
-                kamar: "Room 102",
-                warna: Colors.deepPurple.shade100,
+              // ====================
+              FutureBuilder<List<Map<String, dynamic>>>(
+                future: DBHelper().getUsers(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const CircularProgressIndicator();
+                  }
+
+                  final users = snapshot.data!;
+
+                  return Column(
+                    children: users.map((user) {
+                      String nama = user['nama'] ?? "";
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: penghuniCard(
+                          huruf: nama.isNotEmpty ? nama[0].toUpperCase() : "?",
+                          nama: nama,
+                          kamar: user['kamar'] ?? "_",
+                          warna: Colors.green.shade100,
+                        ),
+                      );
+                    }).toList(),
+                  );
+                },
               ),
+              //
+              //
+              //
+              //
+              //              // penghuniCard(
+              //   huruf: "B",
+              //   nama: "Budi Santoso",
+              //   kamar: "Room 102",
+              //   warna: Colors.deepPurple.shade100,
+              // ),
 
-              const SizedBox(height: 15),
+              // const SizedBox(height: 15),
 
-              penghuniCard(
-                huruf: "A",
-                nama: "Ani Wijaya",
-                kamar: "Room 205",
-                warna: Colors.green.shade200,
-              ),
+              // penghuniCard(
+              //   huruf: "A",
+              //   nama: "Ani Wijaya",
+              //   kamar: "Room 205",
+              //   warna: Colors.green.shade200,
+              // ),
 
-              const SizedBox(height: 15),
+              // const SizedBox(height: 15),
 
-              penghuniCard(
-                huruf: "C",
-                nama: "Citra Lestari",
-                kamar: "Room 108",
-                warna: Colors.orange.shade100,
-              ),
+              // penghuniCard(
+              //   huruf: "C",
+              //   nama: "Citra Lestari",
+              //   kamar: "Room 108",
+              //   warna: Colors.orange.shade100,
+              // ),
             ],
           ),
         ),

@@ -42,6 +42,7 @@ class _DaftarPageState extends State<DaftarPage> {
           email: email.text,
           hp: hp.text,
           password: password.text,
+          kamar: "",
         ),
       );
 

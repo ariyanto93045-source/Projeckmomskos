@@ -15,6 +15,8 @@ class _DashboardPageState extends State<DashboardPage> {
     return DBHelper().getUsers();
   }
 
+  List<Map<String, String>> penghuniBaru = [];
+
   void showEditDialog(Map<String, dynamic> user) {
     final nama = TextEditingController(text: user['nama']);
     final email = TextEditingController(text: user['email']);

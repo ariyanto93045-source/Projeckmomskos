@@ -56,6 +56,7 @@ class _Tugas6State extends State<Tugas6> {
       email: email.text,
       hp: hp.text,
       password: password.text,
+      kamar: "",
     );
 
     bool success = await DBHelper().registerUser(user);
@@ -105,7 +106,7 @@ class _Tugas6State extends State<Tugas6> {
                       const SizedBox(height: 10),
 
                       const Text(
-                        "KOSKU APP",
+                        "MY MOM'S KOS",
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
