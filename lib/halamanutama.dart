@@ -215,6 +215,7 @@ class DashboardPage extends StatelessWidget {
 
               const SizedBox(height: 25),
 
+              //  MEMBUAT KOLOM KAMAR TERISI DAN MENAMPILKAN JUMLAH YANG TERISI
               Row(
                 children: [
                   Expanded(
@@ -224,7 +225,8 @@ class DashboardPage extends StatelessWidget {
                         color: Colors.green.shade100,
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      child: const Column(
+
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -237,17 +239,51 @@ class DashboardPage extends StatelessWidget {
                           SizedBox(height: 15),
                           Row(
                             children: [
-                              Text(
-                                "24",
-                                style: TextStyle(
-                                  fontSize: 40,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              FutureBuilder<List<Map<String, dynamic>>>(
+                                future: DBHelper().getUsers(),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return const Text(
+                                      "0",
+                                      style: TextStyle(
+                                        fontSize: 40,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    );
+                                  }
+
+                                  return Text(
+                                    "${snapshot.data!.length}",
+                                    style: const TextStyle(
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  );
+                                },
                               ),
-                              SizedBox(width: 5),
-                              Text("/ 30", style: TextStyle(fontSize: 20)),
+
+                              const SizedBox(width: 5),
+
+                              const Text(
+                                "/ 20",
+                                style: TextStyle(fontSize: 20),
+                              ),
                             ],
                           ),
+
+                          // Row(
+                          //   children: [
+                          //     Text(
+                          //       "24",
+                          //       style: TextStyle(
+                          //         fontSize: 40,
+                          //         fontWeight: FontWeight.bold,
+                          //       ),
+                          //     ),
+                          //     SizedBox(width: 5),
+                          //     Text("/ 30", style: TextStyle(fontSize: 20)),
+                          //   ],
+                          // ),
                         ],
                       ),
                     ),
@@ -262,7 +298,7 @@ class DashboardPage extends StatelessWidget {
                         color: Colors.green.shade100,
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      child: const Column(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -275,17 +311,51 @@ class DashboardPage extends StatelessWidget {
                           SizedBox(height: 15),
                           Row(
                             children: [
-                              Text(
-                                "32",
-                                style: TextStyle(
-                                  fontSize: 40,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              FutureBuilder<List<Map<String, dynamic>>>(
+                                future: DBHelper().getUsers(),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return const Text(
+                                      "0",
+                                      style: TextStyle(
+                                        fontSize: 40,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    );
+                                  }
+
+                                  return Text(
+                                    "${snapshot.data!.length}",
+                                    style: const TextStyle(
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  );
+                                },
                               ),
-                              SizedBox(width: 5),
-                              Text("Orang", style: TextStyle(fontSize: 20)),
+
+                              const SizedBox(width: 5),
+
+                              const Text(
+                                "Orang",
+                                style: TextStyle(fontSize: 20),
+                              ),
                             ],
                           ),
+
+                          // Row(
+                          //   children: [
+                          //     Text(
+                          //       "32",
+                          //       style: TextStyle(
+                          //         fontSize: 40,
+                          //         fontWeight: FontWeight.bold,
+                          //       ),
+                          //     ),
+                          //     SizedBox(width: 5),
+                          //     Text("Orang", style: TextStyle(fontSize: 20)),
+                          //   ],
+                          // ),
                         ],
                       ),
                     ),
@@ -511,15 +581,134 @@ class DashboardPage extends StatelessWidget {
 
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 15),
-                        child: penghuniCard(
-                          huruf: namaUser.isNotEmpty
-                              ? namaUser[0].toUpperCase()
-                              : "?",
-                          nama: namaUser,
-                          kamar: kamarUser,
-                          warna: Colors.green.shade100,
+                        child: Container(
+                          padding: const EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                            border: Border.all(color: Colors.black12),
+                          ),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 28,
+                                backgroundColor: Colors.green.shade100,
+                                child: Text(
+                                  namaUser.isNotEmpty
+                                      ? namaUser[0].toUpperCase()
+                                      : "?",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 22,
+                                  ),
+                                ),
+                              ),
+
+                              const SizedBox(width: 15),
+
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      namaUser,
+                                      style: const TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      "Kamar : $kamarUser",
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              // ====================
+                              // EDIT DAN HAPUS
+                              // ====================
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.edit,
+                                      color: Colors.blue,
+                                    ),
+                                    onPressed: () {
+                                      final namaController =
+                                          TextEditingController(text: namaUser);
+
+                                      showDialog(
+                                        context: context,
+                                        builder: (_) => AlertDialog(
+                                          title: const Text("Edit Nama"),
+                                          content: TextField(
+                                            controller: namaController,
+                                          ),
+                                          actions: [
+                                            ElevatedButton(
+                                              onPressed: () async {
+                                                await DBHelper().updateUser({
+                                                  "id": user['id'],
+                                                  "nama": namaController.text,
+                                                  "email": user['email'],
+                                                  "hp": user['hp'],
+                                                  "password": user['password'],
+                                                  "kamar": user['kamar'],
+                                                });
+
+                                                Navigator.pop(context);
+
+                                                if (context.mounted) {
+                                                  (context as Element)
+                                                      .markNeedsBuild();
+                                                }
+                                              },
+                                              child: const Text("Simpan"),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.red,
+                                    ),
+                                    onPressed: () async {
+                                      await DBHelper().deleteUser(user['id']);
+
+                                      if (context.mounted) {
+                                        (context as Element).markNeedsBuild();
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       );
+
+                      // return Padding(
+                      //   padding: const EdgeInsets.only(bottom: 15),
+                      //   child: penghuniCard(
+                      //     huruf: namaUser.isNotEmpty
+                      //         ? namaUser[0].toUpperCase()
+                      //         : "?",
+                      //     nama: namaUser,
+                      //     kamar: kamarUser,
+                      //     warna: Colors.green.shade100,
+                      //   ),
+                      // );
                     }).toList(),
                   );
                 },
@@ -549,6 +738,8 @@ class DashboardPage extends StatelessWidget {
       ),
     );
   }
+
+  //  widget penghuni card
 
   Widget penghuniCard({
     required String huruf,

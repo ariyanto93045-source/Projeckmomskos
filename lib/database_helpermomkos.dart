@@ -96,18 +96,22 @@ CREATE TABLE users(
   Future<int> updateUser(Map<String, dynamic> user) async {
     final db = await database;
 
-    return await db.update(
-      'users',
-      user,
-      where: 'id = ?',
-      whereArgs: [user['id']],
-    );
+    return await db.update('users', user, where: 'id = ?', whereArgs: ['id']);
   }
 
   // DELETE
+
   Future<int> deleteUser(int id) async {
     final db = await database;
 
+    // print("DELETE ID = $id");
+
     return await db.delete('users', where: 'id = ?', whereArgs: [id]);
   }
+
+  // Future<int> deleteUser(int id) async {
+  //   final db = await database;
+
+  //   return await db.delete('users', where: 'id = ?', whereArgs: [id]);
+  // }
 }
