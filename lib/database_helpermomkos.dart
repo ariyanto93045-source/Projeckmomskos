@@ -96,7 +96,12 @@ CREATE TABLE users(
   Future<int> updateUser(Map<String, dynamic> user) async {
     final db = await database;
 
-    return await db.update('users', user, where: 'id = ?', whereArgs: ['id']);
+    return await db.update(
+      'users',
+      user,
+      where: 'id = ?',
+      whereArgs: [user['id']],
+    );
   }
 
   // DELETE

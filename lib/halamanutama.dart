@@ -123,6 +123,117 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
+  void tampilkanLaporan(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(20),
+          child: FutureBuilder<List<Map<String, dynamic>>>(
+            future: DBHelper().getUsers(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              final users = snapshot.data!;
+
+              if (users.isEmpty) {
+                return const Center(child: Text("Belum ada data penghuni"));
+              }
+
+              return ListView(
+                children: [
+                  const Text(
+                    "Laporan Pembayaran",
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  ...users.map((user) {
+                    return Card(
+                      child: ListTile(
+                        leading: const Icon(Icons.person, color: Colors.green),
+                        title: Text(user['nama'] ?? ""),
+                        subtitle: Text(
+                          "Kamar : ${user['kamar'] ?? '-'}\nStatus : Belum Membayar",
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ],
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  void tampilkanPenghuni(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(20),
+          child: FutureBuilder<List<Map<String, dynamic>>>(
+            future: DBHelper().getUsers(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              final users = snapshot.data!;
+
+              if (users.isEmpty) {
+                return const Center(child: Text("Belum ada data penghuni"));
+              }
+
+              return ListView(
+                children: [
+                  const Text(
+                    "Daftar Penghuni",
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  ...users.map((user) {
+                    return Card(
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.green.shade100,
+                          child: Text(
+                            user['nama'].toString().isNotEmpty
+                                ? user['nama'][0].toUpperCase()
+                                : "?",
+                          ),
+                        ),
+
+                        title: Text(
+                          user['nama'] ?? "",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+
+                        subtitle: Text(
+                          "Email : ${user['email'] ?? '-'}\n"
+                          "No HP : ${user['hp'] ?? '-'}\n"
+                          "Kamar : ${user['kamar'] ?? '-'}",
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ],
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -173,7 +284,7 @@ class DashboardPage extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.bed),
-              title: const Text("Kamar"),
+              title: const Text("Tagihan"),
               onTap: () {},
             ),
             ListTile(
@@ -414,27 +525,77 @@ class DashboardPage extends StatelessWidget {
 
                   const SizedBox(width: 15),
 
-                  // KAMAR
+                  // // TAGIHAN
+                  // TAGIHAN
                   Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.green,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: const Column(
-                        children: [
-                          Icon(Icons.bed, color: Colors.white, size: 35),
-                          SizedBox(height: 10),
-                          Text(
-                            "Kamar",
-                            style: TextStyle(color: Colors.white, fontSize: 12),
-                          ),
-                        ],
+                    child: InkWell(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text("Tagihan Bulanan atau harian"),
+                              content: const Text(
+                                "Fitur ini digunakan untuk melihat atau membuat tagihan penghuni kos.",
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text("Tutup"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: const Column(
+                          children: [
+                            Icon(
+                              Icons.receipt_long,
+                              color: Colors.white,
+                              size: 35,
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              "Tagihan",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
 
+                  // Expanded(
+                  //   child: Container(
+                  //     padding: const EdgeInsets.all(20),
+                  //     decoration: BoxDecoration(
+                  //       color: Colors.green,
+                  //       borderRadius: BorderRadius.circular(15),
+                  //     ),
+                  //     child: const Column(
+                  //       children: [
+                  //         Icon(Icons.bed, color: Colors.white, size: 35),
+                  //         SizedBox(height: 10),
+                  //         Text(
+                  //           "Kamar",
+                  //           style: TextStyle(color: Colors.white, fontSize: 12),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
                   const SizedBox(width: 15),
 
                   // PEMBAYARAN
@@ -641,16 +802,59 @@ class DashboardPage extends StatelessWidget {
                                       color: Colors.blue,
                                     ),
                                     onPressed: () {
+                                      String namaAwal = namaUser;
+                                      String kamarAwal = kamarUser == "_"
+                                          ? ""
+                                          : kamarUser;
+
                                       final namaController =
-                                          TextEditingController(text: namaUser);
+                                          TextEditingController(text: namaAwal);
+                                      final kamarController =
+                                          TextEditingController(
+                                            text: kamarAwal,
+                                          );
 
                                       showDialog(
                                         context: context,
                                         builder: (_) => AlertDialog(
-                                          title: const Text("Edit Nama"),
-                                          content: TextField(
-                                            controller: namaController,
+                                          title: const Text(
+                                            "Edit Data Penghuni",
                                           ),
+
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              TextField(
+                                                controller: namaController,
+                                                decoration:
+                                                    const InputDecoration(
+                                                      labelText:
+                                                          "Nama Penghuni",
+                                                      prefixIcon: Icon(
+                                                        Icons.person,
+                                                      ),
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                    ),
+                                              ),
+
+                                              const SizedBox(height: 15),
+
+                                              TextField(
+                                                controller: kamarController,
+                                                decoration:
+                                                    const InputDecoration(
+                                                      labelText: "Nomor Kamar",
+                                                      prefixIcon: Icon(
+                                                        Icons.bed,
+                                                      ),
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                    ),
+                                              ),
+                                            ],
+                                          ),
+
                                           actions: [
                                             ElevatedButton(
                                               onPressed: () async {
@@ -660,15 +864,20 @@ class DashboardPage extends StatelessWidget {
                                                   "email": user['email'],
                                                   "hp": user['hp'],
                                                   "password": user['password'],
-                                                  "kamar": user['kamar'],
+                                                  "kamar": kamarController.text,
                                                 });
 
                                                 Navigator.pop(context);
 
-                                                if (context.mounted) {
-                                                  (context as Element)
-                                                      .markNeedsBuild();
-                                                }
+                                                Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        DashboardPage(
+                                                          nama: nama,
+                                                        ),
+                                                  ),
+                                                );
                                               },
                                               child: const Text("Simpan"),
                                             ),
@@ -685,6 +894,14 @@ class DashboardPage extends StatelessWidget {
                                     ),
                                     onPressed: () async {
                                       await DBHelper().deleteUser(user['id']);
+
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              DashboardPage(nama: nama),
+                                        ),
+                                      );
 
                                       if (context.mounted) {
                                         (context as Element).markNeedsBuild();
@@ -723,12 +940,23 @@ class DashboardPage extends StatelessWidget {
         selectedItemColor: Colors.green,
         unselectedItemColor: Colors.green,
         type: BottomNavigationBarType.fixed,
+
+        onTap: (index) {
+          if (index == 2) {
+            tampilkanPenghuni(context);
+          }
+
+          if (index == 3) {
+            tampilkanLaporan(context);
+          }
+        },
+
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard),
             label: "Beranda",
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.bed), label: "Kamar"),
+          BottomNavigationBarItem(icon: Icon(Icons.receipt), label: "Tagihan"),
           BottomNavigationBarItem(icon: Icon(Icons.people), label: "Penghuni"),
           BottomNavigationBarItem(
             icon: Icon(Icons.bar_chart),
