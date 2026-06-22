@@ -1,4 +1,4 @@
-package com.example.proyekaplikasikoskosan
+package com.ppkd.mymomkos
 
 import io.flutter.embedding.android.FlutterActivity
 

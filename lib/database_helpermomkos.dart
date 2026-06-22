@@ -42,7 +42,8 @@ CREATE TABLE users(
   email TEXT UNIQUE,
   hp TEXT,
   password TEXT,
-  kamar TEXT
+  kamar TEXT,
+  role TEXT
 )
 ''');
       },

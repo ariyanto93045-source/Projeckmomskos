@@ -57,6 +57,7 @@ class _Tugas6State extends State<Tugas6> {
       hp: hp.text,
       password: password.text,
       kamar: "",
+      role: "user",
     );
 
     bool success = await DBHelper().registerUser(user);

@@ -75,6 +75,7 @@ class DashboardPage extends StatelessWidget {
                     hp: hp.text,
                     password: password.text,
                     kamar: kamar.text,
+                    role: "user",
                   ),
                 );
 
@@ -161,7 +162,7 @@ class DashboardPage extends StatelessWidget {
                         ),
                       ),
                     );
-                  }).toList(),
+                  }),
                 ],
               );
             },
@@ -224,7 +225,7 @@ class DashboardPage extends StatelessWidget {
                         ),
                       ),
                     );
-                  }).toList(),
+                  }),
                 ],
               );
             },
