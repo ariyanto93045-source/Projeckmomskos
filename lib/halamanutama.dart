@@ -124,6 +124,221 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
+  void tampilkanTagihan(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.7,
+          minChildSize: 0.5,
+          maxChildSize: 0.95,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+              ),
+              padding: const EdgeInsets.all(20),
+              child: FutureBuilder<List<Map<String, dynamic>>>(
+                future: DBHelper().getUsers(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  // Filter users who have a room assigned
+                  final users = snapshot.data!
+                      .where((u) =>
+                          u['kamar'] != null &&
+                          u['kamar'].toString().trim().isNotEmpty)
+                      .toList();
+
+                  if (users.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        "Belum ada tagihan aktif\n(Semua penghuni belum memiliki nomor kamar)",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black54,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    );
+                  }
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Container(
+                          width: 50,
+                          height: 5,
+                          margin: const EdgeInsets.only(bottom: 15),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                      const Text(
+                        "Tagihan Belum Bayar",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      Expanded(
+                        child: ListView.builder(
+                          controller: scrollController,
+                          itemCount: users.length,
+                          itemBuilder: (context, index) {
+                            final user = users[index];
+                            final String namaPenghuni = user['nama'] ?? "";
+                            final String nomorKamar = user['kamar'] ?? "";
+                            final int id = user['id'] ?? 0;
+
+                            // Mock data billing
+                            final String noTagihan =
+                                "INV/202607/${id.toString().padLeft(3, '0')}";
+                            final String totalTagihan = "Rp 1.200.000";
+                            final String jatuhTempo = "10 Juli 2026";
+
+                            return Card(
+                              margin: const EdgeInsets.only(bottom: 15),
+                              elevation: 3,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(15),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          noTagihan,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 5,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.red.shade100,
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          child: Text(
+                                            "Belum Bayar",
+                                            style: TextStyle(
+                                              color: Colors.red.shade700,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const Divider(height: 20),
+                                    ListTile(
+                                      contentPadding: EdgeInsets.zero,
+                                      leading: CircleAvatar(
+                                        backgroundColor: Colors.green.shade100,
+                                        child: const Icon(
+                                          Icons.receipt,
+                                          color: Colors.green,
+                                        ),
+                                      ),
+                                      title: Text(
+                                        namaPenghuni,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      subtitle: Text("Kamar : $nomorKamar"),
+                                      trailing: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            totalTagihan,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.green,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          Text(
+                                            "Jatuh Tempo: $jatuhTempo",
+                                            style: const TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 10,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: ElevatedButton.icon(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          tampilkanQris(context);
+                                        },
+                                        icon: const Icon(
+                                          Icons.qr_code,
+                                          color: Colors.white,
+                                        ),
+                                        label: const Text(
+                                          "BAYAR SEKARANG",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.green,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   void tampilkanLaporan(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -281,22 +496,33 @@ class DashboardPage extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.home),
               title: const Text("Beranda"),
-              onTap: () {},
+              onTap: () {
+                Navigator.pop(context);
+              },
             ),
             ListTile(
               leading: const Icon(Icons.bed),
               title: const Text("Tagihan"),
-              onTap: () {},
+              onTap: () {
+                Navigator.pop(context);
+                tampilkanTagihan(context);
+              },
             ),
             ListTile(
               leading: const Icon(Icons.people),
               title: const Text("Penghuni"),
-              onTap: () {},
+              onTap: () {
+                Navigator.pop(context);
+                tampilkanPenghuni(context);
+              },
             ),
             ListTile(
               leading: const Icon(Icons.bar_chart),
               title: const Text("Laporan"),
-              onTap: () {},
+              onTap: () {
+                Navigator.pop(context);
+                tampilkanLaporan(context);
+              },
             ),
           ],
         ),
@@ -531,25 +757,7 @@ class DashboardPage extends StatelessWidget {
                   Expanded(
                     child: InkWell(
                       onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text("Tagihan Bulanan atau harian"),
-                              content: const Text(
-                                "Fitur ini digunakan untuk melihat atau membuat tagihan penghuni kos.",
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text("Tutup"),
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                        tampilkanTagihan(context);
                       },
                       child: Container(
                         padding: const EdgeInsets.all(20),
@@ -943,6 +1151,10 @@ class DashboardPage extends StatelessWidget {
         type: BottomNavigationBarType.fixed,
 
         onTap: (index) {
+          if (index == 1) {
+            tampilkanTagihan(context);
+          }
+
           if (index == 2) {
             tampilkanPenghuni(context);
           }

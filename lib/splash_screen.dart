@@ -42,79 +42,86 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green,
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(25),
-
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image(
-                image: const AssetImage("assetimage/Logo Moms Kos.png"),
-                width: 130,
-                height: 130,
-              ),
-
-              const SizedBox(height: 20),
-
-              // SALAM OTOMATIS
-              Text(
-                greeting,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF0F9D58), Color(0xFF1B5E20)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(25),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Image(
+                  image: AssetImage("assetimage/Logo Moms Kos Green.png"),
+                  width: 130,
+                  height: 130,
                 ),
-              ),
 
-              const SizedBox(height: 10),
+                const SizedBox(height: 20),
 
-              const Text(
-                "Usaha Lancar, Tempat Tinggal Nyaman",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontStyle: FontStyle.italic,
-                  color: Colors.white,
+                // SALAM OTOMATIS
+                Text(
+                  greeting,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 15),
+                const SizedBox(height: 10),
 
-              const Text(
-                "By Ariyanto",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontStyle: FontStyle.italic,
-                  color: Colors.white,
+                const Text(
+                  "Usaha Lancar, Tempat Tinggal Nyaman",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontStyle: FontStyle.italic,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 40),
+                const SizedBox(height: 15),
 
-              TweenAnimationBuilder<double>(
-                tween: Tween<double>(begin: 0, end: 1),
-                duration: const Duration(seconds: 2),
-                builder: (context, value, child) {
-                  return Transform.rotate(angle: value * 6.28, child: child);
-                },
-                onEnd: () {
-                  setState(() {});
-                },
-                child: const Icon(
-                  Icons.directions_bike,
-                  color: Colors.white,
-                  size: 45,
+                const Text(
+                  "By Ariyanto",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 30),
+                const SizedBox(height: 40),
 
-              const CircularProgressIndicator(color: Colors.white),
-            ],
+                TweenAnimationBuilder<double>(
+                  tween: Tween<double>(begin: 0, end: 1),
+                  duration: const Duration(seconds: 2),
+                  builder: (context, value, child) {
+                    return Transform.rotate(angle: value * 6.28, child: child);
+                  },
+                  onEnd: () {
+                    setState(() {});
+                  },
+                  child: const Icon(
+                    Icons.directions_bike,
+                    color: Colors.white,
+                    size: 45,
+                  ),
+                ),
+
+                const SizedBox(height: 30),
+
+                const CircularProgressIndicator(color: Colors.white),
+              ],
+            ),
           ),
         ),
       ),
