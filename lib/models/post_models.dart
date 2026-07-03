@@ -1,29 +1,13 @@
-// To parse this JSON data, do
-//
-//     final posModel = posModelFromJson(jsonString);
-
-import 'dart:convert';
-
 import 'package:json_annotation/json_annotation.dart';
 
 part 'post_models.g.dart';
 
-List<PostModels> postModelsFromJson(String str) =>
-    List<PostModels>.from(json.decode(str).map((x) => PostModels.fromJson(x)));
-
-String postModelsToJson(List<PostModels> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
-
 @JsonSerializable()
 class PostModels {
-  @JsonKey(name: "userId")
-  int userId;
-  @JsonKey(name: "id")
-  int id;
-  @JsonKey(name: "title")
-  String title;
-  @JsonKey(name: "body")
-  String body;
+  final int userId;
+  final int id;
+  final String title;
+  final String body;
 
   PostModels({
     required this.userId,

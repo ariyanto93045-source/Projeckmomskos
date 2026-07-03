@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:proyekaplikasikoskosan/models/post_models.dart';
+import 'package:proyekaplikasikoskosan/models/user_model_firebase.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'api_services.g.dart';
