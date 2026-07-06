@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "633843548187",
+    "project_id": "my-mom-kos",
+    "storage_bucket": "my-mom-kos.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:633843548187:android:af55c44d5876f761eff8be",
+        "android_client_info": {
+          "package_name": "com.ppkd.mymomkos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC13uW-WV_P2QK0RX-MwYu5cHnoMnvyscc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
