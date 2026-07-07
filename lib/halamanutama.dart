@@ -125,217 +125,332 @@ class DashboardPage extends StatelessWidget {
   }
 
   void tampilkanTagihan(BuildContext context) {
+    List<Map<String, dynamic>>? localUsers;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return DraggableScrollableSheet(
-          expand: false,
-          initialChildSize: 0.7,
-          minChildSize: 0.5,
-          maxChildSize: 0.95,
-          builder: (context, scrollController) {
-            return Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-              ),
-              padding: const EdgeInsets.all(20),
-              child: FutureBuilder<List<Map<String, dynamic>>>(
-                future: DBHelper().getUsers(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  // Filter users who have a room assigned
-                  final users = snapshot.data!
-                      .where((u) =>
-                          u['kamar'] != null &&
-                          u['kamar'].toString().trim().isNotEmpty)
-                      .toList();
-
-                  if (users.isEmpty) {
-                    return const Center(
-                      child: Text(
-                        "Belum ada tagihan aktif\n(Semua penghuni belum memiliki nomor kamar)",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black54,
-                          fontWeight: FontWeight.w500,
-                        ),
+        return StatefulBuilder(
+          builder: (context, setStateSheet) {
+            return DraggableScrollableSheet(
+              expand: false,
+              initialChildSize: 0.7,
+              minChildSize: 0.5,
+              maxChildSize: 0.95,
+              builder: (context, scrollController) {
+                if (localUsers != null) {
+                  return Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(25),
                       ),
-                    );
-                  }
-
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Center(
-                        child: Container(
-                          width: 50,
-                          height: 5,
-                          margin: const EdgeInsets.only(bottom: 15),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[300],
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                      const Text(
-                        "Tagihan Belum Bayar",
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green,
-                        ),
-                      ),
-                      const SizedBox(height: 15),
-                      Expanded(
-                        child: ListView.builder(
-                          controller: scrollController,
-                          itemCount: users.length,
-                          itemBuilder: (context, index) {
-                            final user = users[index];
-                            final String namaPenghuni = user['nama'] ?? "";
-                            final String nomorKamar = user['kamar'] ?? "";
-                            final int id = user['id'] ?? 0;
-
-                            // Mock data billing
-                            final String noTagihan =
-                                "INV/202607/${id.toString().padLeft(3, '0')}";
-                            final String totalTagihan = "Rp 1.200.000";
-                            final String jatuhTempo = "10 Juli 2026";
-
-                            return Card(
-                              margin: const EdgeInsets.only(bottom: 15),
-                              elevation: 3,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(15),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          noTagihan,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey[600],
-                                          ),
-                                        ),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 10,
-                                            vertical: 5,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: Colors.red.shade100,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: Text(
-                                            "Belum Bayar",
-                                            style: TextStyle(
-                                              color: Colors.red.shade700,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const Divider(height: 20),
-                                    ListTile(
-                                      contentPadding: EdgeInsets.zero,
-                                      leading: CircleAvatar(
-                                        backgroundColor: Colors.green.shade100,
-                                        child: const Icon(
-                                          Icons.receipt,
-                                          color: Colors.green,
-                                        ),
-                                      ),
-                                      title: Text(
-                                        namaPenghuni,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      subtitle: Text("Kamar : $nomorKamar"),
-                                      trailing: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            totalTagihan,
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.green,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                          Text(
-                                            "Jatuh Tempo: $jatuhTempo",
-                                            style: const TextStyle(
-                                              color: Colors.red,
-                                              fontSize: 10,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    SizedBox(
-                                      width: double.infinity,
-                                      child: ElevatedButton.icon(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          tampilkanQris(context);
-                                        },
-                                        icon: const Icon(
-                                          Icons.qr_code,
-                                          color: Colors.white,
-                                        ),
-                                        label: const Text(
-                                          "BAYAR SEKARANG",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.green,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
+                    ),
+                    padding: const EdgeInsets.all(20),
+                    child: _buildTagihanContent(
+                      context,
+                      scrollController,
+                      localUsers!,
+                      setStateSheet,
+                    ),
                   );
-                },
-              ),
+                }
+
+                return Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(25),
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(20),
+                  child: FutureBuilder<List<Map<String, dynamic>>>(
+                    future: DBHelper().getUsers(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      localUsers = snapshot.data!
+                          .where(
+                            (u) =>
+                                u['kamar'] != null &&
+                                u['kamar'].toString().trim().isNotEmpty,
+                          )
+                          .toList();
+
+                      return _buildTagihanContent(
+                        context,
+                        scrollController,
+                        localUsers!,
+                        setStateSheet,
+                      );
+                    },
+                  ),
+                );
+              },
             );
           },
         );
       },
+    );
+  }
+
+  Widget _buildTagihanContent(
+    BuildContext context,
+    ScrollController scrollController,
+    List<Map<String, dynamic>> usersList,
+    StateSetter setStateSheet,
+  ) {
+    if (usersList.isEmpty) {
+      return const Center(
+        child: Text(
+          "Belum ada tagihan aktif\n(Semua penghuni belum memiliki nomor kamar)",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.black54,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Center(
+          child: Container(
+            width: 50,
+            height: 5,
+            margin: const EdgeInsets.only(bottom: 15),
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
+        const Text(
+          "Tagihan Belum Bayar",
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.green,
+          ),
+        ),
+        const SizedBox(height: 15),
+        Expanded(
+          child: ListView.builder(
+            controller: scrollController,
+            itemCount: usersList.length,
+            itemBuilder: (context, index) {
+              final user = usersList[index];
+              final String namaPenghuni = user['nama'] ?? "";
+              final String nomorKamar = user['kamar'] ?? "";
+              final String id = user['id']?.toString() ?? "";
+
+              // Dynamic data billing
+              final DateTime now = DateTime.now();
+              const bulanIndo = [
+                "Januari",
+                "Februari",
+                "Maret",
+                "April",
+                "Mei",
+                "Juni",
+                "Juli",
+                "Agustus",
+                "September",
+                "Oktober",
+                "November",
+                "Desember",
+              ];
+              final String namaBulan = bulanIndo[now.month - 1];
+              final String noTagihan =
+                  "INV/${now.year}${now.month.toString().padLeft(2, '0')}/${id.padLeft(3, '0')}";
+              final String totalTagihan = "Rp 1.200.000";
+              final String jatuhTempo = "10 $namaBulan ${now.year}";
+
+              final bool isCashChecked = user['status_cash'] == true;
+              final bool isQrisChecked = user['status_qris'] == true;
+              final bool isPaid = isCashChecked || isQrisChecked;
+
+              return Card(
+                margin: const EdgeInsets.only(bottom: 15),
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              noTagihan,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey[600],
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isPaid
+                                  ? Colors.green.shade100
+                                  : Colors.red.shade100,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              isPaid ? "Sudah Bayar" : "Belum Bayar",
+                              style: TextStyle(
+                                color: isPaid
+                                    ? Colors.green.shade700
+                                    : Colors.red.shade700,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Divider(height: 20),
+                      ListTile(
+                        contentPadding: const EdgeInsets.symmetric(vertical: 4),
+                        leading: CircleAvatar(
+                          radius: 22,
+                          backgroundColor: Colors.green.shade100,
+                          child: const Icon(
+                            Icons.receipt,
+                            color: Colors.green,
+                            size: 20,
+                          ),
+                        ),
+                        title: Text(
+                          namaPenghuni,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        subtitle: Text(
+                          "Kamar : $nomorKamar",
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: Colors.black54,
+                          ),
+                        ),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              totalTagihan,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              "Jatuh Tempo: $jatuhTempo",
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Divider(height: 10),
+                      Row(
+                        children: [
+                          const Text(
+                            "Status Tagihan: ",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
+                          const Spacer(),
+                          Checkbox(
+                            value: isCashChecked,
+                            activeColor: Colors.green,
+                            onChanged: (bool? val) async {
+                              setStateSheet(() {
+                                user['status_cash'] = val ?? false;
+                              });
+                              await DBHelper().updatePaymentStatus(
+                                id,
+                                user['status_cash'] == true,
+                                user['status_qris'] == true,
+                              );
+                            },
+                          ),
+                          const Text("Cas", style: TextStyle(fontSize: 13)),
+                          const SizedBox(width: 15),
+                          Checkbox(
+                            value: isQrisChecked,
+                            activeColor: Colors.green,
+                            onChanged: (bool? val) async {
+                              setStateSheet(() {
+                                user['status_qris'] = val ?? false;
+                              });
+                              await DBHelper().updatePaymentStatus(
+                                id,
+                                user['status_cash'] == true,
+                                user['status_qris'] == true,
+                              );
+                            },
+                          ),
+                          const Text("QRIS", style: TextStyle(fontSize: 13)),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            tampilkanQris(context);
+                          },
+                          icon: const Icon(Icons.qr_code, color: Colors.white),
+                          label: const Text(
+                            "BAYAR SEKARANG",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -368,12 +483,40 @@ class DashboardPage extends StatelessWidget {
                   const SizedBox(height: 15),
 
                   ...users.map((user) {
+                    final bool isCash = user['status_cash'] == true;
+                    final bool isQris = user['status_qris'] == true;
+                    final bool isPaid = isCash || isQris;
+                    String statusText = "Belum Membayar";
+                    if (isCash && isQris) {
+                      statusText = "Sudah Terbayar (Cas & QRIS)";
+                    } else if (isCash) {
+                      statusText = "Sudah Terbayar (Cas)";
+                    } else if (isQris) {
+                      statusText = "Sudah Terbayar (QRIS)";
+                    }
+
                     return Card(
                       child: ListTile(
-                        leading: const Icon(Icons.person, color: Colors.green),
+                        leading: Icon(
+                          Icons.person,
+                          color: isPaid ? Colors.green : Colors.red,
+                        ),
                         title: Text(user['nama'] ?? ""),
-                        subtitle: Text(
-                          "Kamar : ${user['kamar'] ?? '-'}\nStatus : Belum Membayar",
+                        subtitle: Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "Kamar : ${user['kamar'] ?? '-'}\n",
+                                style: TextStyle(color: Colors.black54),
+                              ),
+                              TextSpan(
+                                text: "Status : $statusText",
+                                style: TextStyle(
+                                  color: isPaid ? Colors.green : Colors.red,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     );

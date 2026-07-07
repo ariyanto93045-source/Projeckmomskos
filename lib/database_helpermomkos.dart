@@ -141,8 +141,23 @@ CREATE TABLE users(
         'password': data['password'],
         'kamar': data['kamar'],
         'role': data['role'],
+        'status_cash': data['status_cash'] ?? false,
+        'status_qris': data['status_qris'] ?? false,
       };
     }).toList();
+  }
+
+  Future<int> updatePaymentStatus(String id, bool statusCash, bool statusQris) async {
+    try {
+      await _firestore.collection('users').doc(id).update({
+        'status_cash': statusCash,
+        'status_qris': statusQris,
+      });
+      return 1;
+    } catch (e) {
+      log('UPDATE PAYMENT ERROR: $e');
+      return 0;
+    }
   }
 
   Future<int> updateUser(Map<String, dynamic> user) async {
